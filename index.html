@@ -1,0 +1,319 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Escape the Room</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="module">
+    import {identifiers, views, puzzles} from './enums.js';
+    import TopText from './toptext.js';
+    import {Inventory} from './inventory.js';
+    import {SudokuView, DeskView, BookshelfView, DoorView} from './views.js';
+    import {OverlayStart, OverlayEnd} from './overlay.js'
+
+    const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    const game = new Phaser.Game(config);
+
+    let topText;
+    let inventory;
+
+    let sudokuView;
+    let deskView;
+    let bookshelfView;
+    let doorView;
+    let currentView;
+
+    let overlayStart;
+    let puzzlesLeft;
+    let overlayEnd;
+
+    function preload ()
+    {
+        this.load.image('background', 'assets/background.png');
+        this.load.image('square', 'assets/square.png');
+        this.load.image('screen', 'assets/screen.png');
+        this.load.image('arrowRight', 'assets/arrowRight.png');
+        this.load.image('arrowLeft', 'assets/arrowLeft.png');
+        this.load.image('deskClosed', 'assets/deskClosed.png');
+        this.load.image('deskOpen1', 'assets/deskOpen1.png');
+        this.load.image('deskOpen2', 'assets/deskOpen2.png');
+        this.load.image('deskOpen3', 'assets/deskOpen3.png');
+        this.load.image('triangle', 'assets/triangle.png');
+        this.load.image('colorLock', 'assets/colorLock.png');
+        this.load.image('water', 'assets/water.png');
+        this.load.image('deskDrawer', 'assets/deskDrawer.png');
+        this.load.image('sudokuNote', 'assets/sudokuNote.png');
+        this.load.image('bookNote', 'assets/bookNote.png');
+        this.load.image('triangleNote', 'assets/triangleNote.png');
+        this.load.image('mastermindNote', 'assets/mastermindNote.png');
+        this.load.image('screwdriver', 'assets/screwdriver.png');
+        this.load.image('bookshelf', 'assets/bookshelf.png');
+        this.load.image('trashcan', 'assets/trashcan.png');
+        this.load.image('keyInVase', 'assets/keyInVase.png');
+        this.load.image('keyInVaseWater', 'assets/keyInVaseWater.png');
+        this.load.image('vaseWater', 'assets/vaseWater.png');
+        this.load.image('vent', 'assets/vent.png');
+        this.load.image('ventOpen', 'assets/ventOpen.png');
+        this.load.image('mastermindLock', 'assets/mastermindLock.png');
+        this.load.image('mastermindColor', 'assets/mastermindColor.png');
+        this.load.image('yellowBookBack', 'assets/yellowBookBack.png');
+        this.load.image('redBookBack', 'assets/redBookBack.png');
+        this.load.image('blueBookBack', 'assets/blueBookBack.png');
+        this.load.image('greenBookBack', 'assets/greenBookBack.png');
+        this.load.image('redBook', 'assets/redBook.png');
+        this.load.image('greenBook', 'assets/greenBook.png');
+        this.load.image('yellowBook', 'assets/yellowBook.png');
+        this.load.image('blueBook', 'assets/blueBook.png');
+        this.load.image('key', 'assets/key.png');
+        this.load.image('door', 'assets/door.png');
+        this.load.image('doorOpen', 'assets/doorOpen.png');
+        this.load.image('finalLock', 'assets/finalLock.png');
+        this.load.image('mastermindPoster', 'assets/mastermindPoster.png');
+        this.load.image('letterLock', 'assets/letterLock.png');
+        this.load.image('startEndBackground', 'assets/startEndBackground.png');
+        this.load.image('startButton', 'assets/startButton.png');
+    }
+
+    function create ()
+    {
+        const background = this.add.image(400, 300, 'background');
+        background.setInteractive(Phaser.Geom.Rectangle());
+        topText = new TopText(this);
+        inventory = new Inventory(this);
+        
+        this.input.on('gameobjectdown', onClick);
+        this.input.on('pointerover',onHover);
+
+        puzzlesLeft = Object.values(puzzles);
+
+        sudokuView = new SudokuView(this);
+        deskView = new DeskView(this);
+        bookshelfView = new BookshelfView(this);
+        doorView = new DoorView(this);
+        overlayStart = new OverlayStart(this);
+        overlayEnd = new OverlayEnd(this);
+
+        sudokuView.setDestinationLeft(deskView);
+        sudokuView.setDestinationRight(bookshelfView);
+        
+        deskView.setDestinationLeft(doorView);
+        deskView.setDestinationRight(sudokuView);
+
+        bookshelfView.setDestinationLeft(sudokuView);
+        bookshelfView.setDestinationRight(doorView);
+
+        doorView.setDestinationLeft(bookshelfView);
+        doorView.setDestinationRight(deskView);
+
+        currentView = sudokuView;
+
+        overlayStart.display();
+    }
+
+    function update () {}
+
+    function onClick(pointer, gameObject) {
+        let identifier = gameObject.name[0];
+        topText.clearText();
+
+        if (inventory.selected) {
+            onSelectionClick(gameObject);
+            return;
+        }
+
+        switch(identifier) {
+            case identifiers.ARROW:
+                currentView = currentView.move(gameObject);
+                break;
+            case identifiers.SUDOKUTILE:
+                currentView.sudokuBoard.incrementSquare(gameObject);
+                checkOverallWin(currentView.checkWin(), puzzles.SUDOKU);
+                break;
+            case identifiers.FLIPTILE:
+                currentView.flipBoard.toggleTile(gameObject);
+                checkOverallWin(currentView.checkWin(), puzzles.SUDOKU);
+                break;
+            case identifiers.COLORLOCK:
+                currentView.colorLock.increment(gameObject);
+                checkOverallWin(currentView.checkWin(), puzzles.BOOK);
+                break;
+            case identifiers.MASTERMIND:
+                currentView.mastermindLock.changeColor(gameObject);
+                checkOverallWin(currentView.checkWin(), puzzles.MASTERMIND);
+                break;
+            case identifiers.LETTERLOCK:
+                currentView.letterLock.increment(gameObject);
+                checkOverallWin(currentView.checkWin(), puzzles.TRIANGLE);
+                break;
+            case identifiers.FINALLOCK:
+                currentView.finalLock.increment(gameObject);
+                checkOverallWin(currentView.checkFinalLockWin(), puzzles.FINAL);
+                break;
+            case identifiers.BOOK:
+                currentView.bookshelf.openBook(gameObject);
+                break;
+            case identifiers.ZOOMBOOK:
+                currentView.bookshelf.closeBook(gameObject);
+                break;
+            case identifiers.BOTTOMDRAWER:
+                topText.setText("It's locked.");
+                break;
+            case identifiers.NOTE: case identifiers.SCREWDRIVER: case identifiers.KEY:
+                let item = inventory.findItemByName(gameObject.name);
+                inventory.selectItem(item);
+            case identifiers.NOTE:
+                topText.setText(item.getText());
+                break;
+            case identifiers.STARTBUTTON:
+                overlayStart.hide();
+                currentView.display();
+                break;
+            case identifiers.TOPDRAWER:
+                let items = currentView.desk.openTopDrawer();
+                if (items) {
+                    topText.setText("I found a note and a screwdriver!")
+                    items.forEach(item => inventory.addItem(item));
+                }
+                break;
+            case identifiers.TRASHCAN:
+                let contents = currentView.trashcan.takeOutTrash();
+                if (contents) {
+                    topText.setText("I found a note in there!");
+                    inventory.addItem(contents);
+                } else {
+                    topText.setText("This is empty now.")
+                }
+                break;
+            case identifiers.VASE:
+                if (!currentView.vase.isFilled) {
+                    topText.setText("I see a wooden key! But the vase is glued down and I can't fit my hand inside.")
+                } else if (currentView.vase.containsKey) {
+                    let key = currentView.vase.takeKey();
+                    inventory.addItem(key);
+                }
+                break;
+            case identifiers.WATERBOTTLE:
+                let waterBottle = inventory.findItemByName(gameObject.name);
+                if (waterBottle) {
+                    inventory.selectItem(waterBottle);
+                } else {
+                    waterBottle = currentView.takeWaterBottle();
+                    inventory.addItem(waterBottle);
+                }
+                break;
+            case identifiers.DOOR:
+                if (currentView.door.open) {
+                    overlayEnd.display();
+                } else {
+                    topText.setText("It's locked.")
+                }
+                break;
+        }
+    }
+
+    function onSelectionClick(clicked) {
+        let selectPair = JSON.stringify([inventory.selected.name[0], clicked.name[0]]);
+
+        switch(selectPair) {
+            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.VASE]):
+                topText.setText("I can't reach the key with the screwdriver.")
+                break;
+            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.BOTTOMDRAWER]):
+                topText.setText("The screwdriver won't open this lock.")
+                break;
+            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.VENT]):
+                let ventContent = currentView.vent.openUp();
+                inventory.removeItem(inventory.selected);
+                inventory.addItem(ventContent);
+                topText.setText("I've found a note!");
+                break;
+            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.VASE]):
+                currentView.vase.floatKey();
+                inventory.removeItem(inventory.selected);
+                topText.setText("The key floated to the top! I think I can grab it now.")
+                break;
+            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.TRASHCAN]):
+                topText.setText("I'm not thirsty, but I don't need to throw that away.")
+                break;
+            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.VENT]):
+                topText.setText("I don't think wetting the vent is going to do anything.")
+                break;
+            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.TRASHCAN]):
+                topText.setText("Why would I throw away a perfectly good screwdriver?")
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.BOTTOMDRAWER]):
+                let contents = currentView.desk.openBottomDrawer();
+                inventory.addItem(contents);
+                inventory.removeItem(inventory.selected);
+                topText.setText("The key worked! I found a note.")
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.DOOR]):
+                topText.setText("Awww, it doesn't fit. Maybe it's a key for something else.")
+                break;
+        }
+
+        inventory.unselectItem();
+    }
+
+    function onHover(pointer, gameObjList) {
+        topText.clearHoverText();
+
+        let gameObject = gameObjList[0];
+        if (!gameObject || !gameObject.name || !inventory.findItemByName(gameObject.name)) {
+            return;
+        }
+        let identifier = gameObject.name[0];
+
+        switch(identifier) {
+            case identifiers.WATERBOTTLE:
+                topText.setHoverText("Water Bottle")
+                break;
+            case identifiers.NOTE:
+                let note = inventory.findItemByName(gameObject.name);
+                if (!note.examining) {
+                    topText.setHoverText(note.type+" Note");
+                }
+                break;
+            case identifiers.SCREWDRIVER:
+                topText.setHoverText("Screwdriver")
+                break;
+            case identifiers.KEY:
+                topText.setHoverText("Key")
+                break;
+        }
+    }
+
+    function checkOverallWin(won, puzzle) {
+        if (won) {
+            puzzlesLeft = puzzlesLeft.filter(p => p != puzzle)
+        }
+        if (puzzlesLeft.length == 0) {
+            doorView.door.openUp();
+            topText.setText("The door is open!!!")
+        } else if (puzzle == puzzles.FINAL && puzzlesLeft.indexOf(puzzles.FINAL) == -1) {
+            topText.setText("It's stuck, I think I solved it. The door is still locked though.")
+        }
+    }
+
+</script>
+
+</body>
+</html>
