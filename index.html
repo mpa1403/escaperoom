@@ -1,6 +1,7 @@
 <!doctype html> 
 <html lang="en"> 
 <head> 
+    <link rel="icon" href="favicon.ico?" type="image/x-icon">
     <meta charset="UTF-8" />
     <title>Escape the Room</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
@@ -266,11 +267,20 @@
                 inventory.removeItem(inventory.selected);
                 topText.setText("The key floated to the top! I think I can grab it now.")
                 break;
-            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.TRASHCAN]):
-                topText.setText("I'm not thirsty, but I don't need to throw that away.")
+            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.BOTTOMDRAWER]):
+                topText.setText("I don't think a soggy desk drawer will help.")
                 break;
             case JSON.stringify([identifiers.WATERBOTTLE, identifiers.VENT]):
                 topText.setText("I don't think wetting the vent is going to do anything.")
+                break;
+            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.TRASHCAN]):
+                topText.setText("I'm not thirsty, but I don't need to throw that away.")
+                break;
+            case JSON.stringify([identifiers.WATERBOTTLE, identifiers.DOOR]):
+                topText.setText("Dumping water on the door probably won't unlock it.")
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.VASE]):
+                topText.setText("Why would I stick this back in the vase??")
                 break;
             case JSON.stringify([identifiers.KEY, identifiers.BOTTOMDRAWER]):
                 let contents = currentView.desk.openDrawer(clicked);
@@ -278,16 +288,16 @@
                 inventory.removeItem(inventory.selected);
                 topText.setText("The key worked! I found a note.")
                 break;
-            case JSON.stringify([identifiers.KEY, identifiers.DOOR]):
-                topText.setText("Awww, it doesn't fit. Maybe it's a key for something else.")
-                break;
-            case JSON.stringify([identifiers.KEY, identifiers.TRASHCAN]):
-                topText.setText("Why would I do that???")
-                break;
             case JSON.stringify([identifiers.KEY, identifiers.VENT]):
                 if (!currentView.vent.open) {
                     topText.setText("I don't think keys unlock vents.")
                 }
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.TRASHCAN]):
+                topText.setText("Why would I do that???")
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.DOOR]):
+                topText.setText("Awww, it doesn't fit. Maybe it's a key for something else.")
                 break;
         }
 
