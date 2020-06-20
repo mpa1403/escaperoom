@@ -29,10 +29,10 @@ export default class Bookshelf {
 
     display() {
         this.img.setPosition(400, 325);
-        this.booksByColor["red"].display(437, 329);
-        this.booksByColor["blue"].display(372, 328);
-        this.booksByColor["green"].display(393, 329);
-        this.booksByColor["yellow"].display(415, 328);
+        this.booksByColor.red.display(437, 329);
+        this.booksByColor.blue.display(372, 328);
+        this.booksByColor.green.display(393, 329);
+        this.booksByColor.yellow.display(415, 328);
     }
 
     hide() {
@@ -56,9 +56,9 @@ class Book {
 
         this.img = this.scene.add.image(-1000, -1000, image).setName(identifiers.BOOK + color);
         this.img.setInteractive(Phaser.Geom.Rectangle());
-        this.name = this.img.name;
         this.img.displayHeight = 65;
         this.img.displayWidth = 20;
+        this.name = this.img.name;
     }
 
     display(x, y) {

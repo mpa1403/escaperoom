@@ -3,12 +3,14 @@ import {identifiers} from './enums.js'
 export default class FinalLock {
     constructor(scene) {
         this.scene = scene;
-        this.img = this.scene.add.image(-1000, -1000, 'finalLock');
-        this.img.displayHeight = 75;
-        this.img.displayWidth = 200;
         this.symbolValues = {};
         this.texts = {};
         this.editable = true;
+
+        this.img = this.scene.add.image(-1000, -1000, 'finalLock');
+        this.img.displayHeight = 75;
+        this.img.displayWidth = 200;
+
         this.answer = {
             "!" : 7,
             "U" : 5,
@@ -36,10 +38,12 @@ export default class FinalLock {
         if (!this.editable) {
             return;
         }
+
         this.symbolValues[text.name] += 1;
         if (this.symbolValues[text.name] > 9) {
             this.symbolValues[text.name] = 0;
         }
+
         text.setText(this.symbolValues[text.name]);
     }
 
@@ -50,6 +54,7 @@ export default class FinalLock {
                 correct = false;
             }
         }
+        
         if (correct) {
             this.editable = false;
             return true;

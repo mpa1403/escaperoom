@@ -3,10 +3,10 @@ import { identifiers, noteTypes } from "./enums.js";
 export class Inventory {
     constructor(scene) {
         this.scene = scene;
-        this.label = this.scene.add.text(20, 553, "Inventory:", { color: '#fff' });
         this.items = [];
         this.itemMap = {};
         this.selected = null;
+        this.label = this.scene.add.text(20, 553, "Inventory:", { color: '#fff' });
     }
 
     findItemByName(name) {
@@ -55,14 +55,6 @@ class InventoryItem {
         this.scene = scene;
     }
 
-    getText() {
-        switch(this.type) {
-            case (noteTypes.SUDOKU):
-                return "Weird...";
-            break;
-        }
-    }
-
     display(x, y) {
         this.img.setPosition(x, y);
     }
@@ -81,13 +73,14 @@ export class Note extends InventoryItem {
     constructor(scene, imageName, type) {
         super(scene);
         this.type = type;
+        this.origHeight = 600;
+        this.origWidth = 800;
+        this.examining = false;
+       
         this.img = scene.add.image(-1000, -1000, imageName).setName(identifiers.NOTE + this.type);
         this.img.setDepth(1000);
         this.name = this.img.name;
-        this.origHeight = 600;
-        this.origWidth = 800;
         this.img.setInteractive(Phaser.Geom.Rectangle());
-        this.examining = false;
     }
 
     getText() {
@@ -119,10 +112,12 @@ export class Note extends InventoryItem {
 export class WaterBottle extends InventoryItem {
     constructor(scene) {
         super(scene);
+        
         this.img = this.scene.add.image(-1000, -1000, 'water').setName(identifiers.WATERBOTTLE);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayHeight = 75;
         this.img.displayWidth = 40;
+        
         this.name = this.img.name;
         this.origHeight = this.img.displayHeight;
         this.origWidth = this.img.displayWidth;
@@ -140,14 +135,17 @@ export class WaterBottle extends InventoryItem {
 export class Screwdriver extends InventoryItem {
     constructor(scene) {
         super(scene);
+        
         this.img = this.scene.add.image(-1000, -1000, 'screwdriver').setName(identifiers.SCREWDRIVER);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayHeight = 75;
         this.img.displayWidth = 40;
-        this.name = this.img.name;
+        
+        this.name = this.img.name; 
         this.origHeight = this.img.displayHeight;
         this.origWidth = this.img.displayWidth;
     }
+
     select() {
         this.img.setTint(0xff0000);
     }
@@ -160,14 +158,17 @@ export class Screwdriver extends InventoryItem {
 export class Key extends InventoryItem {
     constructor(scene) {
         super(scene);
+        
         this.img = this.scene.add.image(-1000, -1000, 'key').setName(identifiers.KEY);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayHeight = 40;
         this.img.displayWidth = 40;
+        
         this.name = this.img.name;
         this.origHeight = this.img.displayHeight;
         this.origWidth = this.img.displayWidth;
     }
+
     select() {
         this.img.setTint(0xff0000);
     }

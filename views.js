@@ -54,6 +54,8 @@ export class SudokuView extends View {
     constructor(scene) {
         super(scene);
         this.viewType = views.SUDOKUPUZZLE;
+        this.complete = false;
+
         this.sudokuBoard = new SudokuBoard(this.scene);
         this.flipBoard = new FlipBoard(this.scene);
         this.screen = new Screen(this.scene, "UNSOLVED\n(0/2)");
@@ -77,13 +79,11 @@ export class SudokuView extends View {
         
         if (sudokuWon && flipBoardWon) {
             this.screen.setText("#00ff00", "SOLVED!\n8", 360, 380);
-            return true;
+            this.complete = true;
         } else if (sudokuWon || flipBoardWon) {
             this.screen.setText("#ff0000", "UNSOLVED\n(1/2)", 355, 380);
-            return false;
-        } else {
-            return false;
         }
+        return this.complete;
     }
 }
 

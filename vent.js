@@ -4,12 +4,14 @@ import {Note} from './inventory.js';
 export default class Vent {
     constructor(scene) {
         this.scene = scene;
+        this.open = false;
+
         this.img = scene.add.image(-1000, -1000, 'vent').setName(identifiers.VENT);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayHeight = 75;
         this.img.displayWidth = 125;
-        this.open = false;
-        this.contents = new Note(scene, 'bookNote', noteTypes.BOOK);
+        
+        this.contents = new Note(scene, 'sudokuNote', noteTypes.SUDOKU);
     }
 
     openUp() {

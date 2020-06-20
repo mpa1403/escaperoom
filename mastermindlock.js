@@ -4,10 +4,6 @@ export default class MastermindLock {
     constructor(scene) {
         this.scene = scene;
         this.editable = true;
-        this.create();
-    }
-
-    create() {
         this.img = this.scene.add.image(-1000, -1000, 'mastermindLock');
 
         this.colorChoices = [0xfd92f6, 0x7315a2, 0xffffff, 0x000000];
@@ -42,22 +38,26 @@ export default class MastermindLock {
         if (!this.editable) {
             return;
         }
+
         let index = this.colorChoices.indexOf(this.colorVals[color.name]);
         index += 1;
         if (index > 3) {
             index = 0;
         }
+
         this.colorVals[color.name] = this.colorChoices[index];
         color.setTint(this.colorChoices[index]);
     }
 
     checkWin() {
         let correct = true;
+
         for (let i = 0; i < this.colors.length; i++) {
             if (this.colorVals[this.colors[i].name] != this.colorAnswers[i]) {
                 return false;
             }
         }
+
         this.editable = false;
         return correct;
     }

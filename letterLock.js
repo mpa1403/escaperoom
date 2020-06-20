@@ -3,19 +3,22 @@ import {identifiers} from './enums.js'
 export default class LetterLock {
     constructor(scene) {
         this.scene = scene;
+        
         this.img = this.scene.add.image(-1000, -1000, 'letterLock');
         this.img.displayHeight = 125;
         this.img.displayWidth = 200;
+        
         this.letterValues = {};
         this.texts = {};
         this.editable = true;
+
         this.answer = {
             "a": 4,
             "b": 3, 
             "c": 5,
             "d": 5
         }
-
+        
         for (let letter of ["a", "b", "c", "d"]) {
             let text = this.scene.add.text(-1000, -1000, 0, {color: '#000', fontSize: 65}).setName(identifiers.LETTERLOCK + letter);
             text.setInteractive();
@@ -26,6 +29,7 @@ export default class LetterLock {
 
     display() {
         this.img.setPosition(410, 220);
+
         this.texts.a.setPosition(334, 175);
         this.texts.b.setPosition(372, 175);
         this.texts.c.setPosition(410, 175);
@@ -36,10 +40,12 @@ export default class LetterLock {
         if (!this.editable) {
             return;
         }
+
         this.letterValues[text.name] += 1;
         if (this.letterValues[text.name] > 9) {
             this.letterValues[text.name] = 0;
         }
+        
         text.setText(this.letterValues[text.name]);
     }
 
@@ -57,6 +63,7 @@ export default class LetterLock {
                 correct = false;
             }
         }
+        
         if (correct) {
             this.editable = false;
             return true;

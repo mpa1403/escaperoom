@@ -13,11 +13,11 @@
 <body>
 
 <script type="module">
-    import {identifiers, views, puzzles} from './enums.js';
+    import {identifiers, views, puzzles, overlays} from './enums.js';
     import TopText from './toptext.js';
     import {Inventory} from './inventory.js';
     import {SudokuView, DeskView, BookshelfView, DoorView} from './views.js';
-    import {OverlayStart, OverlayEnd} from './overlay.js'
+    import Overlay from './overlay.js'
 
     const config = {
         type: Phaser.AUTO,
@@ -108,8 +108,8 @@
         deskView = new DeskView(this);
         bookshelfView = new BookshelfView(this);
         doorView = new DoorView(this);
-        overlayStart = new OverlayStart(this);
-        overlayEnd = new OverlayEnd(this);
+        overlayStart = new Overlay(this, overlays.START);
+        overlayEnd = new Overlay(this, overlays.END);
 
         sudokuView.setDestinationLeft(deskView);
         sudokuView.setDestinationRight(bookshelfView);
@@ -176,18 +176,21 @@
             case identifiers.BOTTOMDRAWER:
                 topText.setText("It's locked.");
                 break;
-            case identifiers.NOTE: case identifiers.SCREWDRIVER: case identifiers.KEY:
+            case identifiers.SCREWDRIVER: case identifiers.KEY:
                 let item = inventory.findItemByName(gameObject.name);
                 inventory.selectItem(item);
+                break;
             case identifiers.NOTE:
-                topText.setText(item.getText());
+                let note = inventory.findItemByName(gameObject.name);
+                inventory.selectItem(note);
+                topText.setText(note.getText());
                 break;
             case identifiers.STARTBUTTON:
                 overlayStart.hide();
                 currentView.display();
                 break;
             case identifiers.TOPDRAWER:
-                let items = currentView.desk.openTopDrawer();
+                let items = currentView.desk.openDrawer(gameObject);
                 if (items) {
                     topText.setText("I found a note and a screwdriver!")
                     items.forEach(item => inventory.addItem(item));
@@ -234,7 +237,9 @@
 
         switch(selectPair) {
             case JSON.stringify([identifiers.SCREWDRIVER, identifiers.VASE]):
-                topText.setText("I can't reach the key with the screwdriver.")
+                if (!currentView.vase.isFilled) {
+                    topText.setText("I can't reach the key with the screwdriver.")
+                }
                 break;
             case JSON.stringify([identifiers.SCREWDRIVER, identifiers.BOTTOMDRAWER]):
                 topText.setText("The screwdriver won't open this lock.")
@@ -244,6 +249,12 @@
                 inventory.removeItem(inventory.selected);
                 inventory.addItem(ventContent);
                 topText.setText("I've found a note!");
+                break;
+            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.TRASHCAN]):
+                topText.setText("Why would I throw away a perfectly good screwdriver?")
+                break;
+            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.DOOR]):
+                topText.setText("I'm not sure how to use a screwdriver to lockpick a door.")
                 break;
             case JSON.stringify([identifiers.WATERBOTTLE, identifiers.VASE]):
                 currentView.vase.floatKey();
@@ -256,17 +267,22 @@
             case JSON.stringify([identifiers.WATERBOTTLE, identifiers.VENT]):
                 topText.setText("I don't think wetting the vent is going to do anything.")
                 break;
-            case JSON.stringify([identifiers.SCREWDRIVER, identifiers.TRASHCAN]):
-                topText.setText("Why would I throw away a perfectly good screwdriver?")
-                break;
             case JSON.stringify([identifiers.KEY, identifiers.BOTTOMDRAWER]):
-                let contents = currentView.desk.openBottomDrawer();
+                let contents = currentView.desk.openDrawer(clicked);
                 inventory.addItem(contents);
                 inventory.removeItem(inventory.selected);
                 topText.setText("The key worked! I found a note.")
                 break;
             case JSON.stringify([identifiers.KEY, identifiers.DOOR]):
                 topText.setText("Awww, it doesn't fit. Maybe it's a key for something else.")
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.TRASHCAN]):
+                topText.setText("Why would I do that???")
+                break;
+            case JSON.stringify([identifiers.KEY, identifiers.VENT]):
+                if (!currentView.vent.open) {
+                    topText.setText("I don't think keys unlock vents.")
+                }
                 break;
         }
 

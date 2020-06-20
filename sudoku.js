@@ -57,9 +57,11 @@ export default class SudokuBoard {
                 }
                 x += 1;
             }
+
             if (row == 2 || row == 5) {
                 offsetY += 3;
             }
+
             offsetX = 0;
             x = 0;
             y += 1;
@@ -133,10 +135,12 @@ class SudokuSquare {
         if (!this.editable) {
             return false;
         }
+
         this.number += 1;
         if (this.number > 9) {
             this.number = 1;
         }
+        
         this.text.setText(this.number);
         return this.number == this.answer;
     }

@@ -24,11 +24,13 @@ export default class FlipBoard {
             [0, 0, 0, 0, 0, 1, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 1]
         ];
+
         let x = 0;
         let y = 0;
         let size = 30;
         let offsetX = 0;
         let offsetY = 0;
+
         for (let row = 0; row < 9; row++) {
             for (let col = 0; col < 9; col++) {
                 let answer;
@@ -38,19 +40,25 @@ export default class FlipBoard {
                 } else {
                     answer = true;
                 }
+                
                 let tile = this.scene.add.image(-1000, -1000, 'square').setName(identifiers.FLIPTILE + x + y);
                 tile.displayHeight = size;
                 tile.displayWidth = size;
                 tile.setInteractive(Phaser.Geom.Rectangle());
+                
                 this.addTile(x * size + offsetX, y * size + offsetY, tile, false, answer);
+
                 if (col == 2 || col == 5) {
                     offsetX += 3
                 }
+
                 x += 1;
             }
+            
             if (row == 2 || row == 5) {
                 offsetY += 3;
             }
+
             offsetX = 0;
             x = 0;
             y += 1;
@@ -60,6 +68,7 @@ export default class FlipBoard {
     display() {
         let offsetX = 425;
         let offsetY = 85;
+
         for (let tile of this.tiles) {
             tile.tile.setPosition(tile.x + offsetX, tile.y + offsetY);
         }
@@ -115,11 +124,13 @@ class FlipTile {
         if (!this.editable) {
             return false;
         }
+
         if (!this.value) {
             this.tile.setTint(0x666666);
         } else {
             this.tile.setTint(0xffffff);
         }
+
         this.value = !this.value;
         return this.value == this.answer;
     }

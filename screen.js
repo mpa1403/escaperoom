@@ -2,12 +2,6 @@ export default class Screen {
     constructor(scene, placeholder) {
         this.scene = scene;
         this.placeholder = placeholder;
-        this.img;
-        this.text;
-        this.create();
-    }
-
-    create() {
         this.img = this.scene.add.image(-1000, -1000, 'screen');
         this.text = this.scene.add.text(-1000, -1000, this.placeholder, { color: '#ff0000', align: 'center' });
         this.img.displayWidth = 140;

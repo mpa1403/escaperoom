@@ -5,9 +5,13 @@ export default class Desk {
     constructor(scene) {
         this.scene = scene;
         this.img = scene.add.image(-1000, -1000, 'deskClosed');
+
         let topDrawerContents = [new Screwdriver(this.scene), new Note(this.scene, 'mastermindNote', noteTypes.MASTERMIND)];
         this.topDrawer = new Drawer(scene, identifiers.TOPDRAWER, topDrawerContents);
-        this.bottomDrawer = new Drawer(scene, identifiers.BOTTOMDRAWER, new Note(this.scene, 'sudokuNote', noteTypes.SUDOKU));
+
+        let bottomDrawerContents = new Note(this.scene, 'bookNote', noteTypes.BOOK);
+        this.bottomDrawer = new Drawer(scene, identifiers.BOTTOMDRAWER, bottomDrawerContents);
+
         this.img.displayHeight = 190;
         this.img.displayWidth = 400;
     }
@@ -24,40 +28,30 @@ export default class Desk {
         }
     }
 
-    openTopDrawer() {
-        if (this.topDrawer.open) {
+    openDrawer(drawerObj) {
+        let isTop = drawerObj.name == identifiers.TOPDRAWER
+        let clickedDrawer = isTop ? this.topDrawer : this.bottomDrawer;
+        let otherDrawer = isTop ? this.bottomDrawer : this.topDrawer;
+
+        if (clickedDrawer.open) {
             return;
         }
 
-        if (this.bottomDrawer.open) {
+        if (otherDrawer.open) {
             this.img = this.img.setTexture('deskOpen2');
             this.img.setPosition(400, 429)
-        } else {
+        } else if (isTop) {
             this.img = this.img.setTexture('deskOpen1');
             this.img.displayHeight = 190;
             this.bottomDrawer.resize(150, 60);
             this.bottomDrawer.display(282, 488);
-        }
-
-        let contents = this.topDrawer.openUp();
-        return contents;
-    }
-
-    openBottomDrawer() {
-        if (this.bottomDrawer.open) {
-            return;
-        }
-
-        if (this.topDrawer.open) {
-            this.img = this.img.setTexture('deskOpen2');
-            this.img.setPosition(400, 429)
         } else {
             this.img = this.img.setTexture('deskOpen3');
             this.img.displayHeight = 190;
             this.img.displayWidth = 400;
         }
 
-        let contents = this.bottomDrawer.openUp();
+        let contents = clickedDrawer.openUp();
         return contents;
     }
 
@@ -74,10 +68,12 @@ class Drawer {
         this.open = false;
         this.contents = contents;
         this.locked = identifier == identifiers.BOTTOMDRAWER;
+        
         this.img = this.scene.add.image(-1000, -1000, 'deskDrawer').setName(identifier);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayHeight = 65;
         this.img.displayWidth = 150;
+        this.name = this.img.name;
     }
 
     resize(w,h) {

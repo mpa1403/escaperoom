@@ -33,6 +33,11 @@ export let directions = {
     LEFT: "left"
 }
 
+export let overlays = {
+    START: "start",
+    END: "end"
+}
+
 export let noteTypes = {
     SUDOKU: "Sudoku",
     TRIANGLE: "Triangle",

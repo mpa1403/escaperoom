@@ -3,21 +3,19 @@ import {identifiers, directions} from './enums.js';
 export default class Arrow {
     constructor(scene, direction, view, destination) {
         this.scene = scene;
-        this.direction = direction;
         this.view = view;
+        this.direction = direction;
         this.destination = destination;
-        this.create();
-    }
 
-    create() {
         let image;
         if (this.direction == directions.RIGHT) {
             image = 'arrowRight'
         } else {
             image = 'arrowLeft'
         }
+        
         this.name = identifiers.ARROW + this.direction + this.view.viewType;
-        this.img = this.scene.add.image(-1000, -1000, image).setName(identifiers.ARROW + this.direction + this.view.viewType);
+        this.img = this.scene.add.image(-1000, -1000, image).setName(this.name);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayWidth = 40;
         this.img.displayHeight = 65;
@@ -36,12 +34,12 @@ export default class Arrow {
         this.img.setPosition(x, y)
     }
 
-    hide() {
-        this.img.setPosition(-1000, -1000);
-    }
-
     move() {
         this.view.hide();
         this.destination.display();
+    }
+
+    hide() {
+        this.img.setPosition(-1000, -1000);
     }
 }

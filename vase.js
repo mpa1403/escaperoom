@@ -4,10 +4,12 @@ import {Key} from './inventory.js';
 export default class Vase {
     constructor(scene) {
         this.scene = scene;
+        
         this.img = this.scene.add.image(-1000, -1000, 'keyInVase').setName(identifiers.VASE);
         this.img.setInteractive(Phaser.Geom.Rectangle());
         this.img.displayHeight = 75;
         this.img.displayWidth = 40;
+        
         this.containsKey = true;
         this.isFilled = false;
     }
