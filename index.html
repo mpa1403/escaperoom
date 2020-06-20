@@ -176,6 +176,11 @@
             case identifiers.BOTTOMDRAWER:
                 topText.setText("It's locked.");
                 break;
+            case identifiers.VENT:
+                if (!currentView.vent.open) {
+                    topText.setText("I see something in there, but the vent is screwed shut.")
+                }
+                break;
             case identifiers.SCREWDRIVER: case identifiers.KEY:
                 let item = inventory.findItemByName(gameObject.name);
                 inventory.selectItem(item);
