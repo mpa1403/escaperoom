@@ -8,7 +8,7 @@ export default class Arrow {
         this.destination = destination;
 
         let image;
-        if (this.direction == directions.RIGHT) {
+        if (this.direction === directions.RIGHT) {
             image = 'arrowRight'
         } else {
             image = 'arrowLeft'
@@ -24,7 +24,7 @@ export default class Arrow {
     display() {
         let x;
         let y;
-        if (this.direction == directions.RIGHT) {
+        if (this.direction === directions.RIGHT) {
             x = 770;
             y = 275;
         } else {

@@ -31,7 +31,7 @@ export default class Desk {
     }
 
     openDrawer(drawerObj) {
-        let isTop = drawerObj.name == identifiers.TOPDRAWER
+        let isTop = drawerObj.name === identifiers.TOPDRAWER
         let clickedDrawer = isTop ? this.topDrawer : this.bottomDrawer;
         let otherDrawer = isTop ? this.bottomDrawer : this.topDrawer;
 
@@ -69,7 +69,7 @@ class Drawer {
         this.scene = scene;
         this.open = false;
         this.contents = contents;
-        this.locked = identifier == identifiers.BOTTOMDRAWER;
+        this.locked = identifier === identifiers.BOTTOMDRAWER;
         
         this.img = this.scene.add.image(-1000, -1000, 'deskDrawer').setName(identifier);
         this.img.setInteractive(Phaser.Geom.Rectangle());

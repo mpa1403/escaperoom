@@ -336,10 +336,10 @@
         if (won) {
             puzzlesLeft = puzzlesLeft.filter(p => p != puzzle)
         }
-        if (puzzlesLeft.length == 0) {
+        if (puzzlesLeft.length === 0) {
             doorView.door.openUp();
             topText.setText("The door is open!!!")
-        } else if (puzzle == puzzles.FINAL && puzzlesLeft.indexOf(puzzles.FINAL) == -1) {
+        } else if (puzzle === puzzles.FINAL && puzzlesLeft.indexOf(puzzles.FINAL) === -1) {
             topText.setText("It's stuck, I think I solved it. The door is still locked though.")
         }
     }

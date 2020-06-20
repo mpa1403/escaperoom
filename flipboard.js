@@ -34,7 +34,7 @@ export default class FlipBoard {
         for (let row = 0; row < 9; row++) {
             for (let col = 0; col < 9; col++) {
                 let answer;
-                if (puzzle[row][col] == 0) {
+                if (puzzle[row][col] === 0) {
                     this.correctTiles += 1;
                     answer = false;
                 } else {
@@ -48,14 +48,14 @@ export default class FlipBoard {
                 
                 this.addTile(x * size + offsetX, y * size + offsetY, tile, false, answer);
 
-                if (col == 2 || col == 5) {
+                if (col === 2 || col === 5) {
                     offsetX += 3
                 }
 
                 x += 1;
             }
             
-            if (row == 2 || row == 5) {
+            if (row === 2 || row === 5) {
                 offsetY += 3;
             }
 
@@ -96,7 +96,7 @@ export default class FlipBoard {
     }
 
     checkWin() {
-        if (this.correctTiles == this.winningNum) {
+        if (this.correctTiles === this.winningNum) {
             this.editable = false;
             this.finished = true;
             return true;
@@ -132,6 +132,6 @@ class FlipTile {
         }
 
         this.value = !this.value;
-        return this.value == this.answer;
+        return this.value === this.answer;
     }
 }

@@ -9,7 +9,7 @@ export default class Overlay {
         this.img.setDepth(1000);
 
         let text;
-        if (this.type == overlays.START) {
+        if (this.type === overlays.START) {
             text = "You find yourself in a room\n\nthat looks like it was made\n\nin the Mac version of\n\nMicrosoft Paint.\n\nCan you escape?";
             this.startButton = this.scene.add.image(-1000, -1000, 'startButton').setName(identifiers.STARTBUTTON);
             this.startButton.setInteractive(Phaser.Geom.Rectangle());
