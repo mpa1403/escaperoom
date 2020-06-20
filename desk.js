@@ -25,6 +25,8 @@ export default class Desk {
             this.topDrawer.display(282, 422);
         } else if (this.topDrawer.open && !this.bottomDrawer.open) {
             this.bottomDrawer.display(282, 488);
+        } else {
+            this.img.setPosition(400, 429);
         }
     }
 
