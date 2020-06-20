@@ -52,13 +52,13 @@ export default class SudokuBoard {
                 
                 this.addSquare(x * size + offsetX, y * size + offsetY, tile, text, editable, value, Math.abs(puzzle[row][col]));
 
-                if (col == 2 || col == 5) {
+                if (col === 2 || col === 5) {
                     offsetX += 3
                 }
                 x += 1;
             }
 
-            if (row == 2 || row == 5) {
+            if (row === 2 || row === 5) {
                 offsetY += 3;
             }
 
@@ -81,7 +81,7 @@ export default class SudokuBoard {
         let square = new SudokuSquare(x, y, tile, text, editable, number, answer);
         this.squares.push(square);
         this.board[tile.name] = square;
-        if (editable && answer == 1) {
+        if (editable && answer === 1) {
             this.correctSquares.push(square);
         }
     }
@@ -95,7 +95,7 @@ export default class SudokuBoard {
         let correct = sudokuSquare.increment();
         let index = this.correctSquares.indexOf(sudokuSquare);
         
-        if (correct && index == -1) {
+        if (correct && index === -1) {
             this.correctSquares.push(sudokuSquare);
         } else if (index > -1) {
             this.correctSquares.splice(index, 1);
@@ -103,7 +103,7 @@ export default class SudokuBoard {
     }
 
     checkWin() {
-        if (this.correctSquares.length == this.winningNum) {
+        if (this.correctSquares.length === this.winningNum) {
             this.editable = false;
             this.finished = true;
             return true;
@@ -142,6 +142,6 @@ class SudokuSquare {
         }
         
         this.text.setText(this.number);
-        return this.number == this.answer;
+        return this.number === this.answer;
     }
 }
