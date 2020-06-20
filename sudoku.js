@@ -40,7 +40,7 @@ export default class SudokuBoard {
                 if (value < 0) {
                     value = 1
                     editable = true;
-                    color = '#008000'
+                    color = '#ff1493'
                 }
 
                 let tile = this.scene.add.image(-1000, -1000, 'square').setName(identifiers.SUDOKUTILE + x + y);
